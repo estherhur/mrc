@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>MRC</title>
+    <meta charset="utf-8">
+    <meta name="author" content="Yihui Xie" />
+    <link href="libs/remark-css/default.css" rel="stylesheet" />
+    <link href="libs/remark-css/default-fonts.css" rel="stylesheet" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+# MRC
+## Fun
+### Yihui Xie
+### 2018/2/27
+
+---
+
+#xaringan::inf_mr() to create 
+
+
+
+
+```r
+#install packages
+library(untidydata)
+library(xaringan)
+library(plot3D)
+
+library(tidyverse)
+```
+
+```
+## Loading tidyverse: ggplot2
+## Loading tidyverse: tibble
+## Loading tidyverse: tidyr
+## Loading tidyverse: readr
+## Loading tidyverse: purrr
+## Loading tidyverse: dplyr
+```
+
+```
+## Conflicts with tidy packages ----------------------------------------------
+```
+
+```
+## filter(): dplyr, stats
+## lag():    dplyr, stats
+```
+
+
+```r
+str(language_diversity)
+```
+
+```
+## Classes 'tbl_df', 'tbl' and 'data.frame':	444 obs. of  4 variables:
+##  $ Continent  : chr  "Africa" "Africa" "Oceania" "Asia" ...
+##  $ Country    : chr  "Algeria" "Angola" "Australia" "Bangladesh" ...
+##  $ Measurement: chr  "Langs" "Langs" "Langs" "Langs" ...
+##  $ Value      : num  18 42 234 37 52 38 27 209 75 94 ...
+```
+
+#My Data
+
+- Hello again
+
+---
+
+
+```r
+ld &lt;- language_diversity %&gt;%
+  filter(., Continent =='Africa')  %&gt;% 
+  spread(., Measurement, Value) %&gt;% 
+  select(., country = Country, pop = Population, area = Area, lang = Langs) %&gt;% 
+  mutate(., logArea = log(area), 
+            logPop = log(pop))
+```
+---
+
+
+```r
+ld %&gt;% 
+  ggplot(., aes(x = logArea, y =lang, label = country )) +
+  geom_text()
+```
+
+![](index_files/figure-html/unnamed-chunk-4-1.png)&lt;!-- --&gt;
+
+---
+
+# to see the difference 
+
+
+```r
+ld %&gt;% 
+  ggplot(., aes(x = logArea, y =lang, color = logArea )) +
+  geom_point()
+```
+
+![](index_files/figure-html/unnamed-chunk-5-1.png)&lt;!-- --&gt;
+---
+
+# Fit model (MRC, 3 PARAGRAMS) include the interaction * 
+# all of the possible interactions
+
+```r
+my_mod &lt;- lm(lang ~ logPop + logArea, data = ld)
+my_int &lt;- lm(lang ~ logPop + logArea + logPop:logArea, data = ld)
+
+
+my_int &lt;- lm(lang ~ logPop * logArea, data = ld)
+```
+---
+    </textarea>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "github",
+"highlightLines": true,
+"countIncrementalSlides": false
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function() {
+  var d = document, s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})();</script>
+
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+  tex2jax: {
+    skipTags: ['script', 'noscript', 'style', 'textarea', 'pre']
+  }
+});
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://cdn.bootcss.com/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>

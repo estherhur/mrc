@@ -1,0 +1,22 @@
+{
+    "collab_server" : "",
+    "contents" : "#install packages\n#devtools::install_github(\"jvcasillas/untidydata\")\n#devtools::install_github(\"yihui/xaringan\")\nlibrary(untidydata)\nlibrary(xaringan)\nlibrary(plot3D)\n\nlibrary(tidyverse)\n\n\n\n#2. load language diversity dataset\nstr(language_diversity)\nhead(language_diversity)\n\nunique(language_diversity$Measurement)\n\n#Measurment is a bunch of different variables como separalos. Tidy data..Mutate, mutates\n#variables\n\nld <- language_diversity %>%\n  filter(., Continent =='Africa')  %>% \n  spread(., Measurement, Value) %>% \n  select(., country = Country, pop = Population, area = Area, lang = Langs) %>% \n  mutate(., logArea = log(area), \n            logPop = log(pop))\n\n# Check normality, transform, plot\n\nhist(log(ld$area))\nhist(log(ld$pop))\n\n#in order to see the name of the country\n\nld %>% \n  ggplot(., aes(x = logArea, y =lang, label = country )) +\n  geom_text()\n\n# to see the difference \nld %>% \n  ggplot(., aes(x = logArea, y =lang, color = logArea )) +\n  geom_point()\n\n# Fit model (MRC, 3 PARAGRAMS) include the interaction * \n# all of the possible interactions\n\nmy_mod <- lm(lang ~ logPop + logArea, data = ld)\nmy_int <- lm(lang ~ logPop + logArea + logPop:logArea, data = ld)\n\n\nmy_int <- lm(lang ~ logPop * logArea, data = ld)\n\n#7 converts to a html presentation\n\n\nsummary(my_mod)\nsummary(my_int)\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n",
+    "created" : 1519748946805.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "3007661638",
+    "id" : "49426408",
+    "lastKnownWriteTime" : 1519751558,
+    "last_content_update" : 1519751558793,
+    "path" : "~/Desktop/mrc/scripts/my_scripts.R",
+    "project_path" : "scripts/my_scripts.R",
+    "properties" : {
+        "source_window_id" : "wd56n5ha3oa8v",
+        "tempName" : "Untitled1"
+    },
+    "relative_order" : 1,
+    "source_on_save" : true,
+    "source_window" : "",
+    "type" : "r_source"
+}
